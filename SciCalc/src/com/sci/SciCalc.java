@@ -1,9 +1,9 @@
 package com.sci;
 
 /**
- * A scientific calculator library providing mathematical elements, operations, and constants
+ * A scientific calculator library providing mathematical elements, operations, and constants.
  * <p>
- * written by Angelos Hirmiz as a personal project
+ * written by Angelos Hirmiz as a personal project.
  * <p>
  * 
  * @author Angelos Hirmiz
@@ -23,7 +23,7 @@ public class SciCalc {
         private Elem() {}
         
         /**
-         * Accepts all real numbers and returns the magnitude of the input/the positive real value of the input
+         * Accepts all real numbers and returns the magnitude of the input/the positive real value of the input.
          * 
          * abs(num) = |num|
          * 
@@ -38,7 +38,8 @@ public class SciCalc {
         }
 
         /**
-         * The exponential function, defined as the constant base e (2.7182818...) raised to a number
+         * The exponential function, defined as the constant base e (2.7182818...) raised to a number. This function
+         * is defined through the taylor series expansion of exp(x), where exp(x) = 1 + (x^2)/2! + (x^3)/3! + ...
          * 
          * exp(num) = e^num
          * 
@@ -49,32 +50,137 @@ public class SciCalc {
          */
         public static double exp(double num) {
             if (num == 0) return 1; // Return 1 for an index of 0, (anything raised to 0 is 1.0)
+            if (num < 0) return 1.0 / exp(-num); // Case for negative inputs
 
-            else {
-                final double PRECISION = 1E-15; // Threshold for which additional sums are negligible
-                double sum = 1.0; // Value of the series expansion for n = 0
-                double term = 1.0; // Value of initial term (n = 0)
-                int n = 1; // Current term number
+            final double PRECISION = 1E-15; // Threshold for which additional sums are negligible
 
-                while(abs(term) > PRECISION) { // Continuously sum terms until the term value is negligible
-                    term *= num / n; // Update term value
-                    sum += term; // Add term to overall sum
-                    n++; // Increase term number
-                }
-                return sum;
+            double sum = 1.0; // Value of the series expansion for n = 0
+            double term = 1.0; // Value of initial term (n = 0)
+            int n = 1; // Current term number
+
+            while(abs(term) > PRECISION) { // Continuously sum terms until the term value is negligible
+                term *= num / n; // Update term value
+                sum += term; // Add term to overall sum
+                n++; // Increase term number
             }
+            
+            return sum; // Final value of the exponential series
+        
         }
 
+        /**
+         * The natural logarithm, described as the inverse function of the natural exponential function.
+         * This logarithm has the index e, euler's number, valued at 2.7182818...
+         * This is calculated through Newton's method, also known as linear approximation
+         * to obtain more and more accurate approximations for the logarithm.
+         * 
+         * log(x) = ln(x)
+         * 
+         * i.e., log(2) = 0.6931... : log(e) = 1 : log(exp(10)) = 10
+         * 
+         * @param num The exponential yield, the value acquired when the logarithm is exponentiated
+         * @return The index of the exponential function
+         */
         public static double log(double num) {
-            if (num < 0) return Double.NaN;
-            else if (num == 0) return Double.NEGATIVE_INFINITY;
-            else {
-                
-            }
+            if (num < 0) return Double.NaN; // Case for negative inputs
+            else if (num == 0) return Double.NEGATIVE_INFINITY; // General convention for log(0), approaching negative infinity
+            else if (num == 1) return 0; // exp(0) = 1
+            
+            double PRECISION = 1e-15; //Threshold of accuracy
+            double logarithm = num > 1000 ? 10 : (num > 1 ? num / 2 : num); //Initial guess of logarithm
+            double difference; // The value that modulates the guess
+            do { // Loop continuously until the modulater is negligible
+                difference = (num / exp(logarithm)) - 1;
+                logarithm += difference;
+            } while (abs(difference) > PRECISION);
+
+        return logarithm; // Return the logarithm
         }
 
+        /**
+         * The baseless logarithm, described as the inverse function of an exponential function with an unspecified
+         * base. This logarithm uses the change of base formula to compute the baseless logarithm, alongside the natural logarithm.
+         * 
+         * logb(base, num) = log_b(num)
+         * 
+         * i.e., logb(2, 0.75) = 1.6817 : logb(10, 1000) = 3 : logb(5, 25) = 2
+         * 
+         * @param base The desired logarithm base
+         * @param num The exponential yield, the value acquired when the logarithm is exponentiated to the base
+         * @return The index of the exponential
+         */
+        public static double logb(double base, double num) {
+            // Log bases cannot be 1, or <= 0. The input must be greater than or equal to 0
+            if (base <= 0 || base == 1 || num < 0) return Double.NaN;
+            if (num == 1) return 0.0; // Avoid redundant computation
+            return log(num) / log(base); // Change of base formula
+        }
+        
+        /**
+         * The floor function, taking a number argument and yielding the lesser of the two integers that it falls between.
+         * 
+         * floor(num) = ⌊num⌋
+         * 
+         * i.e., floor(2.8) = 2 : floor(0.999) = 0 : floor(-10) = -10 : floor(-0.00001) = -1
+         * 
+         * @param num A value
+         * @return The lesser of the two integers that the value falls between
+         */
         public static double floor(double num) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            int intPart = (int) num; // Obtain the integer component
+
+            // If the number is already an integer, or positive, return the truncated value. Otherwise subtract 1 from the integer component
+            return (num == intPart || num >= 0) ? intPart : intPart - 1; 
+        }
+
+        /**
+         * The ceiling function, taking a number argument and yielding the greater of the two integers that it falls between.
+         * 
+         * ceil(num) = ⌈num⌉
+         * 
+         * i.e., ceil(2.8) = 3 : ceil(0.0001) = 1 : ceil(-10) = -10 : ceil(-0.5) = 0
+         * 
+         * @param num A value
+         * @return The greater of the two integers that the value falls between
+         */
+        public static double ceil(double num) {
+            int intPart = (int) num; // Obtain the integer component
+
+            // If the number is already an integer, or negative, return the truncated value. Otherwise add 1 from the integer component
+            return (num == intPart || num <= 0) ? intPart : intPart + 1;
+        }
+
+        /**
+         * The standard rounding function, accepting all real numbers and returning the number rounded to the nearest integer. If the decimal component of
+         * the argument is greater than 0.5, the argument is rounded up, and vice versa.
+         * 
+         * i.e., roundInt(2) = 2 : roundInt(-1.9) = -2 : roundInt(4.5) = 5
+         * 
+         * @param num A value
+         * @return The value rounded to the nearest integer
+         */
+        public static double roundInt(double num) {
+            if (num < 0) return -roundInt(-num); // Round numbers symmetrically
+
+            int intPart = (int) num; // Obtain the integer component of the number
+            double frac = num - intPart; // Obtain the decimal component of the number
+
+            return (frac < 0.5) ? intPart : intPart + 1; // Round the number
+        }
+
+        /**
+         * The extended rounding function, accepting all real numbers and a specified number of decimal places p, for the number to be rounded to. If the decimal
+         * place's value exceeds 5, the argument is rounded up to the nearest specified decimal place, and vice versa.
+         * 
+         * i.e., round(2.52, 0) = 3 : round(-4.55, 1) = -4.6 : round(-0.469, 2) = -0.47
+         * 
+         * @param num A value
+         * @param p The number of decimal places the value is to be rounded
+         * @return The value rounded to the specified number of decimal places
+         */
+        public static double round(double num, int p) {
+            double factor = pow(10, p); // Compute the multiplication factor
+            return roundInt(num * factor) / factor; // Round the number multiplied by the factor, then divide by the factor to obtain the rounded number
         }
         
         /**
@@ -136,7 +242,7 @@ public class SciCalc {
         private Const() {}
 
         /**
-         * The base of the natural logarithm, also known as Euler's number
+         * The base of the natural logarithm or exponential function, also known as Euler's number
          */
         public static final double E = 2.718281828459045;
         /**
@@ -144,7 +250,7 @@ public class SciCalc {
          */
         public static final double PI = 3.141592653589793;
         /**
-         * The golden ratio, often denoted by the Greek letter phi (φ)
+         * The golden ratio, often denoted by the Greek letter phi
          */
         public static final double PHI = 1.618033988749895;
         /**
