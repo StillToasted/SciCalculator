@@ -21,11 +21,14 @@ public class SciCalc {
 
         // Prevent instantiation
         private Elem() {}
+
+        //Common precision threshold for approximations and sums
+        private final static double PRECISION = 1e-15;
         
         /**
          * Accepts all real numbers and returns the magnitude of the input/the positive real value of the input.
          * 
-         * abs(num) = |num|
+         * abs(x) = |x|
          * 
          * i.e., abs(5) = 5 : abs(-2) = 2 : abs(-0.707) = 0.707 : abs(0) = 0
          * 
@@ -38,10 +41,70 @@ public class SciCalc {
         }
 
         /**
+         * The square root of a value, defined as the value that when squared yields the original input.
+         * This is calculated through Newton's method, also known as linear approximation, to approach
+         * more and more accurate approximations of the square root.
+         * 
+         * sqrt(x) = √x
+         * 
+         * i.e., sqrt(4) = 2 : sqrt(2.25) = 1.5 : sqrt(2) = 1.414...
+         * 
+         * @param num A value
+         * @return The square root of the value
+         */
+        public static double sqrt(double num) {
+            // Handle trivial cases
+            if (num < 0) return Double.NaN;
+            if (num == 0) return 0;
+            if (num == 1) return 1;
+            
+            long bits = Double.doubleToLongBits(num);    // Literally magic, I couldn't explain these two first lines if I tried.
+            bits = (bits >> 1) + (0x1FF8000000000000L);  // I stole this from stack overflow, apparently it's a Quake 3 algorithm
+            double root = Double.longBitsToDouble(bits); // for inverse square roots. The final line assigns an initial guess.
+            
+            double difference; // The value that modulates the guess
+            do { // Loop continuously until the modulater is negligible
+                difference = -((root * root) - num) / (2 * root);
+                root += difference;
+            } while(abs(difference) > PRECISION); 
+            return root; // Return the square root                                                                         
+        }
+
+        /**
+         * The cube root of a value, defined as the value that when cubed yields the original input.
+         * This is calculated through Newton's method, also known as linear approximation, to approach
+         * more and more accurate approximations of the cube root.
+         * 
+         * cbrt(x) = ∛x
+         * 
+         * i.e., cbrt(8) = 2 : cbrt(-216) = -6 : cbrt(0) = 0 : cbrt(42) = 3.476...
+         * 
+         * @param num A value
+         * @return The cube root of the value
+         */
+        public static double cbrt(double num) {
+            // Handle trivial cases
+            if (num == 0) return 0;
+            if (num == 1) return 1;
+            if (num < 0) return -cbrt(-num);
+
+            long bits = Double.doubleToLongBits(num);    // Again, literally magic, I don't know how this works or why, I also
+            bits = bits / 3 + 0x2A9F7893E0000000L;       // stole this from stack overflow. The final line assigns an initial guess.
+            double cbrt = Double.longBitsToDouble(bits);
+            
+            double difference; // The value that modulates the guess
+            do { // Loop continuously until the modulater is negligible
+                difference = -((cbrt * cbrt * cbrt) - num) / (3 * cbrt * cbrt);
+                cbrt += difference;
+            } while (abs(difference) > PRECISION);
+            return cbrt;
+        }
+
+        /**
          * The exponential function, defined as the constant base e (2.7182818...) raised to a number. This function
          * is defined through the taylor series expansion of exp(x), where exp(x) = 1 + (x^2)/2! + (x^3)/3! + ...
          * 
-         * exp(num) = e^num
+         * exp(x) = e^x
          * 
          * i.e., exp(1) = 2.7182818... : exp(0) = 1 : exp(3) = 20.0855369...
          * 
@@ -52,8 +115,6 @@ public class SciCalc {
             if (num == 0) return 1; // Return 1 for an index of 0, (anything raised to 0 is 1.0)
             if (num < 0) return 1.0 / exp(-num); // Case for negative inputs
 
-            final double PRECISION = 1E-15; // Threshold for which additional sums are negligible
-
             double sum = 1.0; // Value of the series expansion for n = 0
             double term = 1.0; // Value of initial term (n = 0)
             int n = 1; // Current term number
@@ -62,7 +123,7 @@ public class SciCalc {
                 term *= num / n; // Update term value
                 sum += term; // Add term to overall sum
                 n++; // Increase term number
-            }
+            } 
             
             return sum; // Final value of the exponential series
         
@@ -86,8 +147,7 @@ public class SciCalc {
             else if (num == 0) return Double.NEGATIVE_INFINITY; // General convention for log(0), approaching negative infinity
             else if (num == 1) return 0; // exp(0) = 1
             
-            double PRECISION = 1e-15; //Threshold of accuracy
-            double logarithm = num > 1000 ? 10 : (num > 1 ? num / 2 : num); //Initial guess of logarithm
+            double logarithm = num > 1000 ? 10 : (num > 1 ? num / 2 : num); // Initial guess of logarithm
             double difference; // The value that modulates the guess
             do { // Loop continuously until the modulater is negligible
                 difference = (num / exp(logarithm)) - 1;
@@ -119,7 +179,7 @@ public class SciCalc {
         /**
          * The floor function, taking a number argument and yielding the lesser of the two integers that it falls between.
          * 
-         * floor(num) = ⌊num⌋
+         * floor(x) = ⌊x⌋
          * 
          * i.e., floor(2.8) = 2 : floor(0.999) = 0 : floor(-10) = -10 : floor(-0.00001) = -1
          * 
@@ -136,7 +196,7 @@ public class SciCalc {
         /**
          * The ceiling function, taking a number argument and yielding the greater of the two integers that it falls between.
          * 
-         * ceil(num) = ⌈num⌉
+         * ceil(x) = ⌈x⌉
          * 
          * i.e., ceil(2.8) = 3 : ceil(0.0001) = 1 : ceil(-10) = -10 : ceil(-0.5) = 0
          * 
@@ -208,12 +268,12 @@ public class SciCalc {
             }
             
             // Check for negative bases where the index is a non-integer
-            if (base < 0 && index != floor(index)) return Double.NaN; 
+            if (base < 0 && index != (int) index) return Double.NaN; 
 
             // Check for integer indices
-            if (index == floor(index)) {
+            if (index == (int) index) {
                 double result = 1.0;
-                int intIndex = (int) abs(index); // Ensure an integer index
+                int intIndex = (int) abs(index); // Ensure a positive integer index
 
                 for (int i = 0; i < intIndex; i++) { // Compute by repeated multiplication
                     result *= base;

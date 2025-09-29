@@ -1,9 +1,7 @@
 import com.sci.SciCalc.Elem;
 
-
-
 public class Main {
     public static void main(String[] args) {
-        System.out.println(Elem.ceil(-0.00001));
+        System.out.println(Elem.cbrt(-1));
     }
 }
