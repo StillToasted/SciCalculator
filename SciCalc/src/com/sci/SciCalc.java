@@ -124,9 +124,7 @@ public class SciCalc {
                 sum += term; // Add term to overall sum
                 n++; // Increase term number
             } 
-            
             return sum; // Final value of the exponential series
-        
         }
 
         /**
@@ -175,7 +173,152 @@ public class SciCalc {
             if (num == 1) return 0.0; // Avoid redundant computation
             return log(num) / log(base); // Change of base formula
         }
-        
+
+        /**
+         * In radians
+         * 
+         * The sine function, described as the y-coordinate of any point on the unit circle subtended
+         * by an angle in radians from the positive x-axis. This is computed through the taylor series
+         * expansion of sin(x). The sine function has the property that sin(-x) = -sin(x)
+         * 
+         * i.e., sin(2*PI) = 0 : sin(PI/6) = 0.5 : sin(-PI / 4) = -0.7071...
+         * 
+         * @param angle An angle (radians) from the positive x-axis on the unit-circle
+         * @return The y-value of the point on the unit circle relative to the angle
+         */
+        public static double sin(double angle) {
+            if (angle < 0) return -sin(-angle); // Sine is an odd function, return -sin(x) for sin(-x)
+            if (angle > 2 * Const.PI) angle %= 2 * Const.PI; // Limit the angle 
+            // Trivial cases
+            if (angle == 0 || angle == 2 * Const.PI || angle == Const.PI) return 0;
+            if (angle == Const.PI / 2) return 1;
+            if (angle == (3 / 2) * Const.PI) return -1;
+            
+            double term = angle; // Current term of the series expansion
+            double sum = term; // Current sum
+            int n = 1; //Current term number
+
+            while(abs(term) > PRECISION) { // Loop continously until the modulator is negligible
+                term *= (angle * angle * -1) / ((2 * n + 1) * (2 * n)); // Update the term
+                sum += term; // Update the sum
+                n++; // Increment the term number
+            }
+            return sum; // Final value of the sine series
+        }
+
+        /**
+         * In radians or degrees
+         * 
+         * The sine function, described as the y-coordinate of any point on the unit circle subtended
+         * by an angle in either radians or degrees. This is computed through the taylor series expansion of sin(x). The sine function
+         * has the property that sin(-x) = -sin(x)
+         * 
+         * i.e., sin(2*PI) = 0 : sin(PI/6) = 0.5 : sin(-PI / 4) = -0.7071...
+         * 
+         * or
+         * 
+         * i.e., sin(360 deg) = 0 : sin(30 deg) = 0.5 : sin(-45 deg) = -0.7071...
+         * 
+         * @param angle An angle (radians/degrees) from the positive x-axis on the unit-circle
+         * @return The y-value of the point on the unit circle relative to the angle
+         */
+        public static double sin(double angle, boolean inDegrees) {
+            if (inDegrees) return sin((Const.PI / 180) * angle); // Accept an input in degrees and convert back to radians
+            else return sin(angle); // Return the regular function if !inDegrees
+        }
+
+        /**
+         * In radians
+         * 
+         * The cosine function, described as the x-coordinate of any point on the unit circle subtended
+         * by an angle in radians from the positive x-axis. This is computed through the taylor series
+         * expansion of cos(x). The cosine function has the property that cos(-x) = cos(x)
+         * 
+         * i.e., cos(PI/2) = 0 : cos(PI) = -1 : cos(PI/6) = 0.866...
+         * 
+         * @param angle An angle (radians) from the positive x-axis on the unit-circle
+         * @return The x-value of the point on the unit circle relative to the angle
+         */
+        public static double cos(double angle) {
+            if (angle < 0) return cos(-angle); // Cosine is an even function, return cos(x) for cos(-x)
+            if (angle > 2 * Const.PI) angle %= 2 * Const.PI; // Limit the angle 
+            // Trivial cases
+            if (angle ==  Const.PI / 2 || angle == Const.PI * (3.0 / 2.0)) return 0;
+            if (angle == 0) return 1;
+            if (angle == Const.PI) return -1;
+
+            double term = 1; // Current term of the series expansion
+            double sum = term; // Current sum
+            int n = 1; //Current term number
+
+            while(abs(term) > PRECISION) { // Loop continuously until loop modulator is negligible
+                term *= (angle * angle * -1) / ((2 * n - 1) * (2 * n)); // Update the term
+                sum += term; // Update the sum
+                n++; // Increment the term number
+            }
+            return sum; // Final value of the cosine series
+        }
+
+        /**
+         * In radians or degrees
+         * 
+         * The cosine function, described as the x-coordinate of any point on the unit circle subtended
+         * by an angle in radians or degrees from the positive x-axis. This is computed through the taylor series
+         * expansion of cos(x). The cosine function has the property that cos(-x) = cos(x)
+         * 
+         * i.e., cos(PI/2) = 0 : cos(PI) = -1 : cos(PI/6) = 0.866...
+         * 
+         * or
+         * 
+         * i.e., cos(90 deg) = 0 : cos(180 deg) = -1 : cos(30 deg) = 0.866...
+         * 
+         * @param angle An angle (radians/degrees) from the positive x-axis on the unit-circle
+         * @return The x-value of the point on the unit circle relative to the angle
+         */
+        public static double cos(double angle, boolean isDegrees) {
+            if (isDegrees) return cos((Const.PI / 180) * angle); // Accept an input in degrees and convert back to radians
+            else return cos(angle); // Return the regular function if !inDegrees
+        }
+
+        /**
+         * The tangent function, described as the ratio of the y and x coordinates of any point on the unit circle
+         * subtended by an angle in radians from the positive x-axis. This is computed through the identity that
+         * tan(x) = sin(x) / cos(x), where sine and cosine are evaluated through their taylor series expansions. The
+         * tangent function has the property that tan(-x) = -tan(x)
+         * 
+         * i.e., tan(PI) = 0 : tan(PI/4) = 1 : tan(-PI/8) = -0.4142...
+         * 
+         * @param angle An angle (radians) from the positive x-axis on the unit-circle
+         * @return The value of y / x, where x and y are the coordinates of a point on the unit circle relative to the angle
+         */
+        public static double tan(double angle) {
+            if (angle < 0) return -tan(-angle); // Tangent is an odd function, return -tan(x) for tan(-x)
+            if (angle > 2 * Const.PI) angle %= 2 * Const.PI; // Limit the angle
+            if (cos(angle) == 0) return Double.NaN; // Case when the identity sin(x) / cos(x) becomes undefined
+
+            return sin(angle) / cos(angle); // Traditional identity for tan(x) = sin(x) / cos(x)
+        }
+
+        /**
+         * The tangent function, described as the ratio of the y and x coordinates of any point on the unit circle
+         * subtended by an angle in radians or degrees from the positive x-axis. This is computed through the identity that
+         * tan(x) = sin(x) / cos(x), where sine and cosine are evaluated through their taylor series expansions. The
+         * tangent function has the property that tan(-x) = -tan(x)
+         * 
+         * i.e., tan(PI) = 0 : tan(PI/4) = 1 : tan(-PI/8) = -0.4142...
+         * 
+         * or
+         * 
+         * i.e., tan(180 deg) = 0 : tan(45 deg) = 1 : tan(-22.5 deg) = -0.4142...
+         * 
+         * @param angle An angle (radians/degrees) from the positive x-axis on the unit-circle
+         * @return The value of y / x, where x and y are the coordinates of a point on the unit circle relative to the angle
+         */
+        public static double tan(double angle, boolean isDegrees) {
+            if (isDegrees) return tan((Const.PI / 180) * angle); // Accept an input in degrees and convert back to radians
+            else return (tan(angle)); // Return the regular function if !inDegrees
+        }
+
         /**
          * The floor function, taking a number argument and yielding the lesser of the two integers that it falls between.
          * 
@@ -229,17 +372,17 @@ public class SciCalc {
         }
 
         /**
-         * The extended rounding function, accepting all real numbers and a specified number of decimal places p, for the number to be rounded to. If the decimal
+         * The extended rounding function, accepting all real numbers and a specified number of decimal places, for the number to be rounded to. If the decimal
          * place's value exceeds 5, the argument is rounded up to the nearest specified decimal place, and vice versa.
          * 
          * i.e., round(2.52, 0) = 3 : round(-4.55, 1) = -4.6 : round(-0.469, 2) = -0.47
          * 
          * @param num A value
-         * @param p The number of decimal places the value is to be rounded
+         * @param decimalPlaces The number of decimal places the value is to be rounded
          * @return The value rounded to the specified number of decimal places
          */
-        public static double round(double num, int p) {
-            double factor = pow(10, p); // Compute the multiplication factor
+        public static double round(double num, int decimalPlaces) {
+            double factor = pow(10, decimalPlaces); // Compute the multiplication factor
             return roundInt(num * factor) / factor; // Round the number multiplied by the factor, then divide by the factor to obtain the rounded number
         }
         
@@ -309,6 +452,11 @@ public class SciCalc {
          * The ratio of a circle's circumference to its diameter
          */
         public static final double PI = 3.141592653589793;
+        /**
+         * The alternative circle constant, the ratio fo a circle's circumference to
+         * its radius
+         */
+        public static final double TAU = 6.283185307179586;
         /**
          * The golden ratio, often denoted by the Greek letter phi
          */
