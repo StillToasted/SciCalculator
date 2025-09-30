@@ -320,6 +320,82 @@ public class SciCalc {
         }
 
         /**
+         * The cosecant function, traditionally described as the reciprocal of the sine function, or 1.0 / sin(x). Is undefined
+         * when sin(x) = 0
+         * 
+         * i.e., csc(PI/4) = 1.414... : csc(-PI/6) = -2 : csc(PI/2) = 1
+         * 
+         * @param angle An angle (radians) from the positive x-axis on the unit-circle
+         * @return The value of 1 / y, where y is the second coordinate of any point on the unit-circle
+         */
+        public static double csc(double angle) {
+            if (sin(angle) == 0) return Double.NaN; // Case when 1 / sin(x) is undefined
+            else return 1.0 / sin(angle); // Use identity that csc(x) = 1 / sin(x)
+        }
+        
+        /**
+         * The cosecant function, traditionally described as the reciprocal of the sine function, or 1.0 / sin(x). Is undefined
+         * when sin(x) = 0
+         * 
+         * i.e., csc(PI/4) = 1.414... : csc(-PI/6) = -2 : csc(PI/2) = 1
+         * 
+         * @param angle An angle (radians/degrees) from the positive x-axis on the unit-circle
+         * @return The value of 1 / y, where y is the second coordinate of any point on the unit-circle
+         */
+        public static double csc(double angle, boolean isDegrees) {
+            if (isDegrees) return csc((Const.PI / 180) * angle); // Accept an input in degrees and convert back to radians
+            else return csc(angle); // Return the regular function if !inDegrees
+        }
+
+        /**
+         * The arcsine function, inverse to the ordinary sine function, returning an angle in radians. Has the property:
+         * arcsin(-x) = -arcsin(x); is restricted by a domain between -1 and 1 and range between -PI/2 and PI/2
+         * 
+         * for sin(x) = a, a = arcsin(x)
+         * 
+         * i.e., arcsin(1) = 1.57... : arcsin(0.707) = 0.785... : arcsin(-0.5) = -0.523... : arcsin(0) = 0
+         * 
+         * @param len The length of the terminal arm on the unit circle
+         * @return The angle that is subtended between the positive x-axis and the terminal arm in radians
+         */
+        public static double asin(double len) {
+            if (len < 0) return -asin(-len); // Arcsine is an odd function, return -asin(x) for asin(-x)
+            // Trivial cases
+            if (len == 0) return 0;
+            if (len > 1) return Double.NaN;
+            if (len == 1) return Const.PI / 2;
+
+            double angle = (Const.PI / 2) - sqrt(2 * (1 - len)); // Series based initial guess of arcsine
+            double difference;
+            do { // Loop continuously until loop modulator is negligible
+                difference = -(sin(angle) - len) / (cos(angle));
+                angle += difference;
+            } while(abs(difference) > PRECISION);
+            return angle; // Return the final angle
+        }
+
+        /**
+         * The arcsine function, inverse to the ordinary sine function, returning an angle in radians/degrees. Has the 
+         * property: arcsin(-x) = -arcsin(x); is restricted by a domain between -1 and 1 and range between -PI/2 and PI/2 or
+         * -90 and 90
+         * 
+         * for sin(x) = a, a = arcsin(x)
+         * 
+         * i.e., arcsin(1) = 1.57... : arcsin(0.707) = 0.785... : arcsin(-0.5) = -0.523... : arcsin(0) = 0
+         * 
+         * or
+         * 
+         * i.e., arcsin(1) = 90 : arcsin(0.707) = 45 : arcsin(-0.5) = -30 : arcsin(0) = 0
+         * 
+         * @param len The length of the terminal arm on the unit circle
+         * @return The angle that is subtended between the positive x-axis and the terminal arm in radians/degrees
+         */
+        public static double asin(double len, boolean isDegrees) {
+            if (isDegrees) return asin(len) * 180 / Const.PI; // Convert the radian result to degrees
+            else return asin(len); // If !degrees, return the regular function in radians
+        }
+
+        /**
          * The floor function, taking a number argument and yielding the lesser of the two integers that it falls between.
          * 
          * floor(x) = ⌊x⌋
