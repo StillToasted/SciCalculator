@@ -339,6 +339,10 @@ public class SciCalc {
          * 
          * i.e., csc(PI/4) = 1.414... : csc(-PI/6) = -2 : csc(PI/2) = 1
          * 
+         * or
+         * 
+         * i.e., csc(45 deg) = 1.414... : csc(-30 deg) = -2 : csc(90 deg) = 1 
+         * 
          * @param angle An angle (radians/degrees) from the positive x-axis on the unit-circle
          * @return The value of 1 / y, where y is the second coordinate of any point on the unit-circle
          */
@@ -348,12 +352,76 @@ public class SciCalc {
         }
 
         /**
+         * The secant function, traditionally described as the reciprocal of the cosine function, or 1.0 / cos(x). Is undefined
+         * when cos(x) = 0
+         * 
+         * i.e., sec(PI/4) = 1.414... : sec(-PI/3) = 2 : sec(PI) = -1
+         * 
+         * @param angle An angle (radians) from the positive x-axis on the unit-circle
+         * @return The value of 1 / x, where x is the second coordinate of any point on the unit-circle
+         */
+        public static double sec(double angle) {
+            if (cos(angle) == 0) return Double.NaN; // Case when 1 / cos(x) is undefined
+            else return 1.0 / cos(angle); // Use identity that sec(x) = 1 / cos(x)
+        }
+
+        /**
+         * The secant function, traditionally described as the reciprocal of the cosine function, or 1.0 / cos(x). Is undefined
+         * when cos(x) = 0
+         * 
+         * i.e., sec(PI/4) = 1.414... : sec(-PI/3) = 2 : sec(PI) = -1
+         * 
+         * or
+         * 
+         * i.e., sec(45 deg) = 1.414... : sec(-60 deg) = 2 : sec(180 deg) = -1
+         * 
+         * @param angle An angle (radians/degrees) from the positive x-axis on the unit-circle
+         * @return The value of 1 / x, where x is the second coordinate of any point on the unit-circle
+         */
+        public static double sec(double angle, boolean isDegrees) {
+            if (isDegrees) return sec((Const.PI / 180) * angle); // Accept an input in degrees and convert back to radians
+            else return sec(angle); // Return the regular function if !inDegrees
+        }
+
+        /**
+         * The cotangent function, traditionally described as the reciprocal of the tangent function, or 1.0 / tan(x). Is undefined
+         * when sin(x) = 0
+         * 
+         * i.e., cot(PI/4) = 1 : cot(-PI/8) = -2.414... : cot(PI/2) = 0
+         * 
+         * @param angle An angle (radians) from the positive x-axis on the unit-circle
+         * @return The value of x / y, where x and y are the coordinates of a point on the unit circle relative to the angle
+         */
+        public static double cot(double angle) {
+            if (tan(angle) == 0) return Double.NaN; // Case when 1 / cos(x) is undefined
+            else return 1.0 / tan(angle); // Use identity that sec(x) = 1 / cos(x)
+        }
+
+        /**
+         * The cotangent function, traditionally described as the reciprocal of the tangent function, or 1.0 / tan(x). Is undefined
+         * when sin(x) = 0
+         * 
+         * i.e., cot(PI/4) = 1 : cot(-PI/8) = -2.414... : cot(PI/2) = 0
+         * 
+         * or
+         * 
+         * i.e., cot(45 deg) = 1 : cot(-22.5 deg) = -2.414... : cot(90 deg) = 0
+         * 
+         * @param angle An angle (radians/degrees) from the positive x-axis on the unit-circle
+         * @return The value of x / y, where x and y are the coordinates of a point on the unit circle relative to the angle
+         */
+        public static double cot(double angle, boolean isDegrees) {
+            if (isDegrees) return cot((Const.PI / 180) * angle); // Accept an input in degrees and convert back to radians
+            else return cot(angle); // Return the regular function if !inDegrees
+        }
+
+        /**
          * The arcsine function, inverse to the ordinary sine function, returning an angle in radians. Has the property:
          * arcsin(-x) = -arcsin(x); is restricted by a domain between -1 and 1 and range between -PI/2 and PI/2
          * 
-         * for sin(x) = a, a = arcsin(x)
+         * for sin(x) = a, a = asin(x)
          * 
-         * i.e., arcsin(1) = 1.57... : arcsin(0.707) = 0.785... : arcsin(-0.5) = -0.523... : arcsin(0) = 0
+         * i.e., asin(1) = 1.57... : asin(0.707) = 0.785... : asin(-0.5) = -0.523... : asin(0) = 0
          * 
          * @param len The length of the terminal arm on the unit circle
          * @return The angle that is subtended between the positive x-axis and the terminal arm in radians
@@ -379,13 +447,13 @@ public class SciCalc {
          * property: arcsin(-x) = -arcsin(x); is restricted by a domain between -1 and 1 and range between -PI/2 and PI/2 or
          * -90 and 90
          * 
-         * for sin(x) = a, a = arcsin(x)
+         * for sin(x) = a, a = asin(x)
          * 
-         * i.e., arcsin(1) = 1.57... : arcsin(0.707) = 0.785... : arcsin(-0.5) = -0.523... : arcsin(0) = 0
+         * i.e., asin(1) = 1.57... : asin(0.707) = 0.785... : asin(-0.5) = -0.523... : asin(0) = 0
          * 
          * or
          * 
-         * i.e., arcsin(1) = 90 : arcsin(0.707) = 45 : arcsin(-0.5) = -30 : arcsin(0) = 0
+         * i.e., asin(1) = 90 : asin(0.707) = 45 : asin(-0.5) = -30 : asin(0) = 0
          * 
          * @param len The length of the terminal arm on the unit circle
          * @return The angle that is subtended between the positive x-axis and the terminal arm in radians/degrees
@@ -393,6 +461,50 @@ public class SciCalc {
         public static double asin(double len, boolean isDegrees) {
             if (isDegrees) return asin(len) * 180 / Const.PI; // Convert the radian result to degrees
             else return asin(len); // If !degrees, return the regular function in radians
+        }
+        /**
+         * The arccosine function, inverse to the ordinary cosine function, returning an angle in radians.
+         * Is restricted by a domain between -1 and 1 and range between PI and 0 or
+         * 180 and 0
+         * 
+         * for cos(x) = a, a = acos(x)
+         * 
+         * i.e., acos(1) = 0 : arcsin(0.707) = 0.785... : acos(-0.5) = 2.0943... : acos(0) = 1.57...
+         * 
+         * @param len The length of the terminal arm on the unit circle
+         * @return The angle that is subtended between the positive x-axis and the terminal arm in radians/degrees
+         */
+        public static double acos(double len) {
+            if (len == -1) return Const.PI;
+            if (len == 0) return Const.PI / 2;
+            if (len == 1) return 0;
+
+            double angle = (len >= 0) ? 
+            (Const.PI / 2) - sqrt(2 * (1 - len)) : // For len in [0, 1]
+            Const.PI - sqrt(2 * (1 + len)); // For len in [-1, 0)
+            double difference;
+            do { // Loop continuously until loop modulator is negligible
+                difference = (cos(angle) - len) / (sin(angle));
+                angle += difference;
+            } while (abs(difference) > PRECISION);
+            return angle; // Return the final angle
+        }
+        
+        /**
+         * The arccosine function, inverse to the ordinary cosine function, returning an angle in radians.
+         * Is restricted by a domain between -1 and 1 and range between PI and 0 or
+         * 180 and 0
+         * 
+         * for cos(x) = a, a = acos(x)
+         * 
+         * i.e., acos(1) = 0 : arcsin(0.707) = 0.785... : acos(-0.5) = 2.0943... : acos(0) = 1.57...
+         * 
+         * @param len The length of the terminal arm on the unit circle
+         * @return The angle that is subtended between the positive x-axis and the terminal arm in radians/degrees
+         */
+        public static double acos(double len, boolean isDegrees) {
+            if (isDegrees) return acos(len) * 180 / Const.PI; // Convert the radian result to degrees
+            else return acos(len); // If !degrees, return the regular function in radians
         }
 
         /**
@@ -509,9 +621,9 @@ public class SciCalc {
     /**
      * A collection of scientific operations and functions
      */
-    public static class Sci {
+    public static class Ops {
         // Prevent instantiation
-        private Sci() {}
+        private Ops() {}
     }
     /**
      * A collection of important mathematical constants
