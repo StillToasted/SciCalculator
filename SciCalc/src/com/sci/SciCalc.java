@@ -112,9 +112,10 @@ public class SciCalc {
          * @return e raised to the index (e^index)
          */
         public static double exp(double num) {
+            if (num >= 710) return Double.POSITIVE_INFINITY; // The log(Double.POSITIVE_INFINITY) yields approximately 710
             if (num == 0) return 1; // Return 1 for an index of 0, (anything raised to 0 is 1.0)
             if (num < 0) return 1.0 / exp(-num); // Case for negative inputs
-
+            
             double sum = 1.0; // Value of the series expansion for n = 0
             double term = 1.0; // Value of initial term (n = 0)
             int n = 1; // Current term number
@@ -145,12 +146,17 @@ public class SciCalc {
             else if (num == 0) return Double.NEGATIVE_INFINITY; // General convention for log(0), approaching negative infinity
             else if (num == 1) return 0; // exp(0) = 1
             
-            double logarithm = num > 1000 ? 10 : (num > 1 ? num / 2 : num); // Initial guess of logarithm
+            long bits = Double.doubleToLongBits(num);                                   // I almost feel bad for continuing to rob stack overflow without bothering to
+            int exp = (int)((bits >> 52) & 0x7FF) - 1023;                               // comprehend what these lines of code actually do.
+            double mantissa = (bits & 0xFFFFFFFFFFFFFL) / (double)(1L << 52) + 1.0;     // I should really get on that...
+            double logarithm = exp * 0.6931471805599453 + (mantissa - 1);  // Initial guess of logarithm
+
+            int maxIterations = 100; // The maximum number of iterations before the loop is broken out of 
             double difference; // The value that modulates the guess
             do { // Loop continuously until the modulater is negligible
                 difference = (num / exp(logarithm)) - 1;
                 logarithm += difference;
-            } while (abs(difference) > PRECISION);
+            } while (abs(difference) > PRECISION && --maxIterations > 0);
 
         return logarithm; // Return the logarithm
         }
@@ -172,6 +178,34 @@ public class SciCalc {
             if (base <= 0 || base == 1 || num < 0) return Double.NaN;
             if (num == 1) return 0.0; // Avoid redundant computation
             return log(num) / log(base); // Change of base formula
+        }
+
+        /**
+         * The binary logarithm, described as the inverse function of the base 2 exponential function.
+         * 
+         * log2(num) = log_2(num)
+         * 
+         * i.e., log2(8) = 3 : log2(1) = 0 : log2(0.0625) = -4 : log2(43) = 5.426...
+         * 
+         * @param num The exponential yield, the value acquired when the logarithm is exponentiated by 2
+         * @return The index of the exponential
+         */
+        public static double log2(double num) {
+            return log(num) / log(2); // Change of base formula
+        }
+
+        /**
+         * The base 10 logarithm, described as the inverse function of the base 10 exponential function.
+         * 
+         * log10(num) = log_10(num)
+         * 
+         * i.e., log10(10000) = 4 : log10(1) = 0 : log10(0.0001) = -4 : log10(43) = 1.633...
+         * 
+         * @param num The exponential yield, the value acquired when the logarithm is exponentiated by 10
+         * @return The index of the exponential
+         */
+        public static double log10(double num) {
+            return log(num) / log(10); // Change of base formula
         }
 
         /**
