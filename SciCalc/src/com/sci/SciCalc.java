@@ -1,5 +1,6 @@
 package com.sci;
 
+import java.util.*;
 /**
  * A scientific calculator library providing mathematical elements, operations, and constants.
  * <p>
@@ -206,6 +207,111 @@ public class SciCalc {
          */
         public static double log10(double num) {
             return log(num) / log(10); // Change of base formula
+        }
+
+        /**
+         * The hyperbolic sine function, described as the y-coordinate of any point on the unit hyperbola, defined with
+         * x^2 - y^2 = 1. This is computed through the exponential definition of sinh(x), such that:
+         * 
+         * sinh(x) = (e^x - e^-x) / 2
+         * 
+         * i.e., sinh(0) = 0 : sinh(10) = 11013.232... : sinh(-10) = -11013.232...
+         * 
+         * @param num A real number
+         * @return The hyperbolic sine
+         */
+        public static double sinh(double num) {
+            if (num == 0) return 0; // Trivial case
+            if (num < 0) return -sinh(-num); // Hyperbolic sine is an odd function
+            // Definition of hyperbolic sine
+            else return (exp(num) - exp(-num)) / 2;
+        }
+
+        /**
+         * The hyperbolic cosine function, described as the x-coordinate of any point on the unit hyperbola, defined with
+         * x^2 - y^2 = 1. This is computed through the exponential definition of cosh(x), such that:
+         * 
+         * cosh(x) = (e^x + e^-x) / 2
+         * 
+         * i.e., cosh(0) = 1 : cosh(10) = 11013.232... : cosh(-10) = -11013.232...
+         * 
+         * @param num A real number
+         * @return The hyperbolic cosine
+         */
+        public static double cosh(double num) {
+            if (num == 0) return 1; // Trivial case
+            if (num < 0) return cosh(-num); // Hyperbolic cosine is an even function
+            // Definition of hyperbolic cosine
+            else return (exp(num) + exp(-num)) / 2;
+        }
+
+        /**
+         * The hyperbolic tangent function, described as the ratio of the y-coordinate to the x-coordinate on the unit hyperbola, 
+         * defined with x^2 - y^2 = 1. This is computed through the definition of tanh(x), such that:
+         * 
+         * tanh(x) = sinh(x) / cosh(x)
+         * 
+         * i.e., tanh(0) = 0 : tanh(0.5) = 0.462... : tanh(-0.5) = -0.462...
+         * 
+         * @param num A real number
+         * @return The hyperbolic tangent
+         */
+        public static double tanh(double num) {
+            if (num == 0) return 0; // Trivial case
+            // Definition of hyperbolic tangent
+            else return sinh(num) / cosh(num);
+        }
+
+        /**
+         * The hyperbolic cosecant function, described as the reciprocal of the y-coordinate on the unit hyperbola,
+         * defined with x^2 - y^2 = 1. This is computed through the definition of csch(x), such that:
+         * 
+         * csch(x) = 1 / sinh(x)
+         * 
+         * i.e., csch(0.5) = 1.919... : csch(-0.5) = -1.919... : csch(10000) ≈ 0
+         * 
+         * @param num A real number
+         * @return The hyperbolic cosecant
+         */
+        public static double csch(double num) {
+            // Case where hyperbolic cosecant is undefined
+            if (num == 0) return Double.NaN;
+            // Definition of hyperbolic cosecant
+            else return 1 / sinh(num);
+        }
+
+        /**
+         * The hyperbolic secant function, described as the reciprocal of the x-coordinate on the unit hyperbola,
+         * defined with x^2 - y^2 = 1. This is computed through the definition of sech(x), such that:
+         * 
+         * sech(x) = 1 / cosh(x)
+         * 
+         * i.e., sech(0.5) = 0.886... : sech(-0.5) = 0.886 : sech(10000) ≈ 0
+         * 
+         * @param num A real number
+         * @return The hyperbolic secant
+         */
+        public static double sech(double num) {
+            if (num == 1) return 1; // Trivial case
+            // Definition of hyperbolic secant
+            else return 1 / cosh(num);
+        }
+
+        /**
+         * The hyperbolic cotangent function, described as the ratio of the x-coordinate to the y-coordinate on the unit hyperbola, 
+         * defined with x^2 - y^2 = 1. This is computed through the definition of coth(x), such that:
+         * 
+         * coth(x) = 1 / tanh(x)
+         * 
+         * i.e., coth(1) = 1.313... : coth(-1) = 1.313... : coth(100) ≈ 0
+         * 
+         * @param num A real number
+         * @return The hyperbolic cotangent
+         */
+        public static double coth(double num) {
+            // Case when hyperbolic cotangent is undefined
+            if (num == 0) return Double.NaN;
+            else return 1 / tanh(num); // Definition of hyperbolic cotangent
         }
 
         /**
@@ -428,7 +534,7 @@ public class SciCalc {
          */
         public static double cot(double angle) {
             if (tan(angle) == 0) return Double.NaN; // Case when 1 / cos(x) is undefined
-            else return 1.0 / tan(angle); // Use identity that sec(x) = 1 / cos(x)
+            else return 1.0 / tan(angle); // Use identity that cot(x) = 1 / tan(x)
         }
 
         /**
@@ -742,6 +848,78 @@ public class SciCalc {
         }
 
         /**
+         * The arithmetic mean function, taking in a list of values and outputting their average. This is defined
+         * by the formula:
+         *
+         * (a + b + c...) / # of numbers
+         *
+         * @param nums A list of numbers
+         * @return Arithmetic mean
+         */
+        public static double mean(double... nums) {
+            double sum = 0;
+            // Sum all values within the inputted list
+            for(double num : nums) sum += num;
+            return sum / nums.length;
+        }
+
+        /**
+         * The median function, taking in a list of values and outputting their median. This is defined as choosing
+         * the centermost value (or the average of the two centermost values) of a sorted list.
+         * 
+         * @param nums A list of numbers
+         * @return Median
+         */
+        public static double median(double... nums) {
+            // Case for empty inputs
+            if (nums.length == 0) return 0;
+            // Initially sort the array before obtaining the median
+            Arrays.sort(nums);
+            if (nums.length % 2 == 0) { // Even array length case
+                return (nums[nums.length / 2 - 1] + nums[nums.length / 2]) / 2;
+            }
+            //Odd array length case
+            else return nums[(int)ceil((double)nums.length / 2) - 1];
+        }
+
+        /**
+         * The mode function, returning the set of values with the highest frequency in a given data set.
+         * 
+         * i.e., mode(1, 1, 3, 4, 5) = {1} : mode(1, 1, 2, 2, 3, 3, 4, 5, 6) = {1, 2, 3}
+         * 
+         * @param nums Array of numbers
+         * @return The mode(s) of the set of data
+         */
+        public static double[] mode(double... nums) {
+            // Case for empty inputs
+            if (nums.length == 0) return new double[0];
+
+            // Create a map, matching each element to a frequency
+            Map<Double, Integer> freqMap = new HashMap<>();
+            for (double num : nums) { // Loop through nums[]
+                freqMap.put(num, freqMap.getOrDefault(num, 0) + 1);
+            }
+
+            int maxFrequency = Collections.max(freqMap.values());
+
+            // Create list of modes (designed to return multiple modes)
+            List<Double> modes = new ArrayList<>();
+            for (var entry : freqMap.entrySet()) {
+                if (entry.getValue() == maxFrequency) {
+                    modes.add(entry.getKey());
+                }
+            }
+
+            // Convert List<> to array type double
+            double[] result = new double[modes.size()];
+            for (int i = 0; i < modes.size(); i++) {
+                result[i] = modes.get(i);
+            }
+
+            return result; // Return list of modes
+        }
+
+        /**
          * The standard rounding function, accepting all real numbers and returning the number rounded to the nearest integer. If the decimal component of
          * the argument is greater than 0.5, the argument is rounded up, and vice versa.
          * 
@@ -843,7 +1021,6 @@ public class SciCalc {
             
             return exp(index * log(base)); // Use the identity base^index = exp(index * log(base))
         }
-
     }
     
     /**
