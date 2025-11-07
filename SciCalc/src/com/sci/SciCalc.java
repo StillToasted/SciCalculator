@@ -496,6 +496,7 @@ public class SciCalc {
             if (isDegrees) return asin(len) * 180 / Const.PI; // Convert the radian result to degrees
             else return asin(len); // If !degrees, return the regular function in radians
         }
+
         /**
          * The arccosine function, inverse to the ordinary cosine function, returning an angle in radians.
          * Is restricted by a domain between -1 and 1 and range between PI and 0 or
@@ -509,6 +510,7 @@ public class SciCalc {
          * @return The angle that is subtended between the positive x-axis and the terminal arm in radians/degrees
          */
         public static double acos(double len) {
+            // Trivial cases
             if (len == -1) return Const.PI;
             if (len == 0) return Const.PI / 2;
             if (len == 1) return 0;
@@ -525,13 +527,16 @@ public class SciCalc {
         }
         
         /**
-         * The arccosine function, inverse to the ordinary cosine function, returning an angle in radians.
-         * Is restricted by a domain between -1 and 1 and range between PI and 0 or
-         * 180 and 0
+         * The arccosine function, inverse to the ordinary cosine function, returning an angle in radians/degrees.
+         * Is restricted by a domain between -1 and 1 and range between PI and 0 or 180 and 0
          * 
          * for cos(x) = a, a = acos(x)
          * 
          * i.e., acos(1) = 0 : arcsin(0.707) = 0.785... : acos(-0.5) = 2.0943... : acos(0) = 1.57...
+         * 
+         * or
+         * 
+         * i.e., acos(1) = 0 : acos(0.707) = 45 : acos(-0.5) = -60 : acos(0) = 90
          * 
          * @param len The length of the terminal arm on the unit circle
          * @return The angle that is subtended between the positive x-axis and the terminal arm in radians/degrees
@@ -539,6 +544,94 @@ public class SciCalc {
         public static double acos(double len, boolean isDegrees) {
             if (isDegrees) return acos(len) * 180 / Const.PI; // Convert the radian result to degrees
             else return acos(len); // If !degrees, return the regular function in radians
+        }
+
+        /**
+         * The arctangent function, inverse to the ordinary tangent function, returning an angle in radians.
+         * Has an unrestricted domain, and range between -PI/2 and PI/2
+         * 
+         * for tan(x) = a, a = atan(x)
+         * 
+         * i.e., atan(1) = 0.785... : atan(0) = 0 : atan(-10) = -1.471...
+         * 
+         * @param len The length of the terminal arm on the unit circle
+         * @return The angle that is subtended between the positive x-axis and the terminal arm in radians
+         */
+        public static double atan(double len) {
+            if (len < 0) return -atan(-len); // Arctangent is an odd function, return -atan(x) for atan(-x)
+            // Trivial cases
+            if (len == 0) return 0;
+            if (len == 1) return Const.PI / 4;
+            if (len == Double.POSITIVE_INFINITY) return Const.PI / 2;
+            if (len > 1) return Const.PI / 2 - atan(1 / len);
+
+            double angle = len / (1 + 0.28 * len * len); // Series based initial guess of arctangent
+            double difference;
+            do { // Loop continuously until loop modulator is negligible
+                difference = -(tan(angle) - len) / (sec(angle) * sec(angle));
+                angle += difference;
+            } while (abs(difference) > PRECISION);
+            return angle; // Return the final angle
+        }
+
+        /**
+         * The arctangent function, inverse to the ordinary tangent function, returning an angle in radians/degrees.
+         * Has an unrestricted domain, and range between -PI/2 and PI/2 or -90 and 90.
+         * 
+         * for tan(x) = a, a = atan(x)
+         * 
+         * i.e., atan(1) = 0.785... : atan(0) = 0 : atan(-10) = -1.471...
+         * 
+         * or
+         * 
+         * i.e., atan(1) = 45 : atan(0) = 0 : atan(-10) = -84.289...
+         * 
+         * @param len The length of the terminal arm on the unit circle
+         * @return The angle that is subtended between the positive x-axis and the terminal arm in radians/degrees
+         */
+
+        public static double atan(double len, boolean isDegrees) {
+            if (isDegrees) return atan(len) * 180 / Const.PI; // Convert the radian result to degrees
+            else return atan(len); // If !degrees, return the regular function in radians
+        }
+
+        /**
+         * The two argument arctangent function, otherwise known as argument function in complex analysis. Accepts
+         * an x and y coordinate pair, and returns the angle subtended by the point and the x-axis. Ranges from
+         * -PI to PI.
+         * 
+         * When y > 0, atan2(y, x) > 0 and the opposite is true.
+         * 
+         * @param y The y-coordinate of the point
+         * @param x The x-coordinate of the point
+         * @return The angle that is subtended between the positive x-axis and the terminal arm in radians.
+         */
+        public static double atan2(double y, double x) {
+            if (x == 0) { // All cases when x is zero
+                if (y > 0) return Const.PI / 2;
+                else if (y < 0) return -Const.PI / 2;
+                else return 0; // Undefined mathematically, but conventional
+            }
+            // atan(y/x) naturally returns accurate angle measurements for quadrant I and IV
+            if (x > 0) return atan(y / x);
+            else if (y >= 0) return Const.PI - atan(abs(y / x)); // Formula for angle measurements in quadrant II 
+            else return - Const.PI + atan(y / x); // Formula for angle measurements in quadrant III
+        }
+
+        /**
+         * The two argument arctangent function, otherwise known as argument function in complex analysis. Accepts
+         * an x and y coordinate pair, and returns the angle subtended by the point and the x-axis. Ranges from
+         * -PI to PI or -180 to 180.
+         * 
+         * When y > 0, atan2(y, x) > 0 and the opposite is true.
+         * 
+         * @param y The y-coordinate of the point
+         * @param x The x-coordinate of the point
+         * @return The angle that is subtended between the positive x-axis and the terminal arm in radians/degrees.
+         */
+        public static double atan2(double y, double x, boolean isDegrees) {
+            if (isDegrees) return atan2(y, x) * 180 / Const.PI; // Convert the radian result to degrees
+            else return atan2(y, x); // If !degrees, return the regular function in radians
         }
 
         /**
@@ -555,7 +648,7 @@ public class SciCalc {
             int intPart = (int) num; // Obtain the integer component
 
             // If the number is already an integer, or positive, return the truncated value. Otherwise subtract 1 from the integer component
-            return (num == intPart || num >= 0) ? intPart : intPart - 1; 
+            return (num == intPart || num >= 0) ? intPart : intPart - 1;
         }
 
         /**
@@ -570,7 +663,6 @@ public class SciCalc {
          */
         public static double ceil(double num) {
             int intPart = (int) num; // Obtain the integer component
-
             // If the number is already an integer, or negative, return the truncated value. Otherwise add 1 from the integer component
             return (num == intPart || num <= 0) ? intPart : intPart + 1;
         }
