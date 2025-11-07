@@ -635,6 +635,21 @@ public class SciCalc {
         }
 
         /**
+         * The hypotenuse function, returning the length of the hypotenuse of a right triangle given the two legs.
+         * 
+         * hypot(x, y) = √(x² + y²)
+         * 
+         * i.e., hypot(3, 4) = 5 : hypot(5, 12) = 13
+         * 
+         * @param x The first leg of the triangle
+         * @param y The second leg of the triangle
+         * @return The length of the hypotenuse
+         */
+        public static double hypot(double x, double y) {
+            return sqrt(x*x + y*y);
+        }
+
+        /**
          * The floor function, taking a number argument and yielding the lesser of the two integers that it falls between.
          * 
          * floor(x) = ⌊x⌋
@@ -665,6 +680,65 @@ public class SciCalc {
             int intPart = (int) num; // Obtain the integer component
             // If the number is already an integer, or negative, return the truncated value. Otherwise add 1 from the integer component
             return (num == intPart || num <= 0) ? intPart : intPart + 1;
+        }
+        
+        /**
+         * The max function, returns the larger of two numbers.
+         * 
+         * i.e., max(2, 3) = 3 : max(Double.NaN, -1) = -1
+         * 
+         * @param a A real number
+         * @param b A real number
+         * @return The greater of a, b
+         */
+        public static double max(double a, double b) {
+            // NaN cases
+            if (Double.isNaN(a)) return b;
+            if (Double.isNaN(b)) return a;
+            return a > b ? a : b;
+        }
+
+        /**
+         * The min function, returns the lesser of two numbers.
+         * 
+         * i.e., max(2, 3) = 2 : max(Double.NaN, -1) = -1
+         * 
+         * @param a A real number
+         * @param b A real number
+         * @return The lesser of a, b
+         */
+        public static double min(double a, double b) {
+            // NaN cases
+            if (Double.isNaN(a)) return b; 
+            if (Double.isNaN(b)) return a;
+            return a < b ? a : b;
+        }
+
+        /**
+         * Returns the modulus of x by y.
+         * Works consistently for negative numbers.
+         * 
+         * mod(x, y) = x - y * floor(x / y)
+         * 
+         * @param x The dividend
+         * @param y The divisor
+         * @return x modulo y
+         */
+        public static double mod(double x, double y) {
+            return x - y * floor(x / y);
+        }
+
+        /**
+         * Returns the IEEE-style remainder of a / b.
+         *
+         * remainder(a, b) = a - b * round(a / b)
+         *
+         * @param a Dividend
+         * @param b Divisor
+         * @return The remainder
+         */
+        public static double remainder(double a, double b) {
+            return a - b * roundInt(a / b);
         }
 
         /**
@@ -698,6 +772,34 @@ public class SciCalc {
         public static double round(double num, int decimalPlaces) {
             double factor = pow(10, decimalPlaces); // Compute the multiplication factor
             return roundInt(num * factor) / factor; // Round the number multiplied by the factor, then divide by the factor to obtain the rounded number
+        }
+
+        /**
+         * The regular signum function, returning the sign of a number (-1, 0, or 1)
+         * 
+         * @param num A real number
+         * @return The sign
+         */
+        public static double sgn(double num) {
+            if (num == 0) return 0; // Case when num == 0
+            else return num > 0 ? 1 : -1;
+        }
+
+        /**
+         * The factorial function, defined recursively such that 0! = 1, 1! = 1, and n! = n(n-1)!
+         * 
+         * factorial(n) = n!
+         * 
+         * i.e., factorial(0) = 1 : factorial(5) = 120 : factorial(10) = 3628800
+         * 
+         * @param n A non-negative integer
+         * @return The factorial of n
+         */
+        public static double factorial(int n) {
+            if (n < 0) return Double.NaN; // Case for negative factorials
+            else if (n == 0 || n == 1) return 1; // Case for 0! or 1!
+            // Compute the factorial using the formula n! = n(n-1)!
+            else return n * factorial(n - 1);
         }
         
         /**
