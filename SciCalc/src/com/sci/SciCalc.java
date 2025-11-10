@@ -314,6 +314,61 @@ public class SciCalc {
             else return 1 / tanh(num); // Definition of hyperbolic cotangent
         }
 
+
+        /**
+         * The hyperbolic arcsine function, defined to be the inverse of the ordinary hyperbolic
+         * sine function. This function is computed through the logarithmic inverse of sinh(x), such that:
+         * 
+         * asinh(x) = log(x + sqrt(x^2 + 1))
+         * 
+         * i.e., asinh(sinh(4)) = 4 : asinh(2) 1.443... : asinh(-2) = -1.443...
+         * 
+         * @param num A real number
+         * @return The hyperbolic arcsine
+         */
+        public static double asinh(double num) {
+            if (num == 0) return 0; // Trivial case
+            else if (num < 0) return -asinh(-num); // Hyperbolic arcsine is an odd function
+            // The definition of asinh(x)
+            else return log(num + sqrt(num*num + 1));
+        }
+
+        /**
+         * The hyperbolic arccosine function, defined to be the inverse of the ordinary hyperbolic
+         * cosine function. This function is computed through the logarithmic inverse of cosh(x), such that:
+         * 
+         * atanh(x) = log((1 + x) / (1 - x)) / 2
+         * 
+         * i.e., atanh(tanh(0.5)) = 0.5 : acosh(2) 1.317... : acosh(100) = 5.298...
+         * 
+         * @param num A real number
+         * @return The hyperbolic arccosine
+         */
+        public static double acosh(double num) {
+            if (num == 1) return 0; // Trivial case
+            else if (num < 1) return Double.NaN; // Hyperbolic arccosine is defined from (1, inf)
+            // The definition of acosh(x)
+            else return log(num + sqrt(num*num - 1));
+        }
+
+        /**
+         * The hyperbolic arctangent function, defined to be the inverse of the ordinary hyperbolic
+         * tangent function. This function is computed through the logarithmic inverse of tanh(x), such that:
+         * 
+         * atanh(x) = log(x + sqrt(x^2 - 1))
+         * 
+         * i.e., atanh(tanh(0.5)) = 0.5 : atanh(0.5) 0.549... : atanh(-0.5) = -0.549...
+         * 
+         * @param num A real number
+         * @return The hyperbolic arctangent
+         */
+        public static double atanh(double num) {
+            if (num == 0) return 0; // Trivial case
+            else if (!(num <= 1 && num >= -1)) return Double.NaN; // Hyperbolic arctangent is defined from (-1, 1)
+            // The definition of atanh(x)
+            else return log((1 + num)/(1 - num)) / 2;
+        }
+
         /**
          * In radians
          * 
@@ -1074,6 +1129,5 @@ public class SciCalc {
          * The Euler-Mascheroni constant, which appears in various problems in number theory and analysis
          */
         public static final double EULER = 0.5772156649015329;
-        
     }
 }
