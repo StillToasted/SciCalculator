@@ -370,6 +370,35 @@ public class SciCalc {
         }
 
         /**
+         * Converts an angle in degrees to an angle in radians
+         * 
+         * i.e., toRadians(45) = 0.785... : toRadians(0) = 0
+         * 
+         * @param degrees An angle in degrees
+         * @return The same angle in radians
+         */
+        public static double toRadians(double degrees) {
+            if (degrees == 0) return 0; // Trivial case
+            // Conversion between degrees and radians
+            else return (degrees / 180) * Const.PI;
+        }
+
+        
+        /**
+         * Converts an angle in radians to an angle in degrees
+         * 
+         * i.e., toDegrees(0.785) ≈ 45 : toDegrees(0) = 0
+         * 
+         * @param radians An angle in radians
+         * @return That same angle in degrees
+         */
+        public static double toDegrees(double radians) {
+            if (radians == 0) return 0; // Trivial case
+            // Conversion between radians and degrees
+            else return (radians / Const.PI) * 180;
+        }
+
+        /**
          * In radians
          * 
          * The sine function, described as the y-coordinate of any point on the unit circle subtended
@@ -418,7 +447,7 @@ public class SciCalc {
          * @return The y-value of the point on the unit circle relative to the angle
          */
         public static double sin(double angle, boolean inDegrees) {
-            if (inDegrees) return sin((Const.PI / 180) * angle); // Accept an input in degrees and convert back to radians
+            if (inDegrees) return sin(toRadians(angle)); // Accept an input in degrees and convert back to radians
             else return sin(angle); // Return the regular function if !inDegrees
         }
 
@@ -471,7 +500,7 @@ public class SciCalc {
          * @return The x-value of the point on the unit circle relative to the angle
          */
         public static double cos(double angle, boolean isDegrees) {
-            if (isDegrees) return cos((Const.PI / 180) * angle); // Accept an input in degrees and convert back to radians
+            if (isDegrees) return cos(toRadians(angle)); // Accept an input in degrees and convert back to radians
             else return cos(angle); // Return the regular function if !inDegrees
         }
 
@@ -510,7 +539,7 @@ public class SciCalc {
          * @return The value of y / x, where x and y are the coordinates of a point on the unit circle relative to the angle
          */
         public static double tan(double angle, boolean isDegrees) {
-            if (isDegrees) return tan((Const.PI / 180) * angle); // Accept an input in degrees and convert back to radians
+            if (isDegrees) return tan(toRadians(angle)); // Accept an input in degrees and convert back to radians
             else return (tan(angle)); // Return the regular function if !inDegrees
         }
 
@@ -542,7 +571,7 @@ public class SciCalc {
          * @return The value of 1 / y, where y is the second coordinate of any point on the unit-circle
          */
         public static double csc(double angle, boolean isDegrees) {
-            if (isDegrees) return csc((Const.PI / 180) * angle); // Accept an input in degrees and convert back to radians
+            if (isDegrees) return csc(toRadians(angle)); // Accept an input in degrees and convert back to radians
             else return csc(angle); // Return the regular function if !inDegrees
         }
 
@@ -574,7 +603,7 @@ public class SciCalc {
          * @return The value of 1 / x, where x is the second coordinate of any point on the unit-circle
          */
         public static double sec(double angle, boolean isDegrees) {
-            if (isDegrees) return sec((Const.PI / 180) * angle); // Accept an input in degrees and convert back to radians
+            if (isDegrees) return sec(toRadians(angle)); // Accept an input in degrees and convert back to radians
             else return sec(angle); // Return the regular function if !inDegrees
         }
 
@@ -606,7 +635,7 @@ public class SciCalc {
          * @return The value of x / y, where x and y are the coordinates of a point on the unit circle relative to the angle
          */
         public static double cot(double angle, boolean isDegrees) {
-            if (isDegrees) return cot((Const.PI / 180) * angle); // Accept an input in degrees and convert back to radians
+            if (isDegrees) return cot(toRadians(angle)); // Accept an input in degrees and convert back to radians
             else return cot(angle); // Return the regular function if !inDegrees
         }
 
@@ -654,7 +683,7 @@ public class SciCalc {
          * @return The angle that is subtended between the positive x-axis and the terminal arm in radians/degrees
          */
         public static double asin(double len, boolean isDegrees) {
-            if (isDegrees) return asin(len) * 180 / Const.PI; // Convert the radian result to degrees
+            if (isDegrees) return toDegrees(asin(len)); // Convert the radian result to degrees
             else return asin(len); // If !degrees, return the regular function in radians
         }
 
@@ -703,7 +732,7 @@ public class SciCalc {
          * @return The angle that is subtended between the positive x-axis and the terminal arm in radians/degrees
          */
         public static double acos(double len, boolean isDegrees) {
-            if (isDegrees) return acos(len) * 180 / Const.PI; // Convert the radian result to degrees
+            if (isDegrees) return toDegrees(acos(len)); // Convert the radian result to degrees
             else return acos(len); // If !degrees, return the regular function in radians
         }
 
@@ -752,7 +781,7 @@ public class SciCalc {
          */
 
         public static double atan(double len, boolean isDegrees) {
-            if (isDegrees) return atan(len) * 180 / Const.PI; // Convert the radian result to degrees
+            if (isDegrees) return toDegrees(atan(len)); // Convert the radian result to degrees
             else return atan(len); // If !degrees, return the regular function in radians
         }
 
@@ -791,7 +820,7 @@ public class SciCalc {
          * @return The angle that is subtended between the positive x-axis and the terminal arm in radians/degrees.
          */
         public static double atan2(double y, double x, boolean isDegrees) {
-            if (isDegrees) return atan2(y, x) * 180 / Const.PI; // Convert the radian result to degrees
+            if (isDegrees) return toDegrees(atan2(y, x)); // Convert the radian result to degrees
             else return atan2(y, x); // If !degrees, return the regular function in radians
         }
 
