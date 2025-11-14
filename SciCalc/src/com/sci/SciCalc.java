@@ -1034,7 +1034,62 @@ public class SciCalc {
             // Compute the factorial using the formula n! = n(n-1)!
             else return n * factorial(n - 1);
         }
+
+        /**
+         * The combination function, defined to accept some value n (the number of items in a group) and some value r
+         * (the number of items chosen from that group n). The function returns the number of combinations that exist for
+         * such n and r (the number of ways r items can be picked in a group of n).
+         * 
+         * comb(n, r) = nCr
+         * 
+         * i.e., comb(4, 2) = 6 : comb(3, 0) = 1 : comb(8, 4) = 70
+         * 
+         * @param n The number of items to choose from
+         * @param r The number of items chosen
+         * @return The number of ways to choose r items from n options
+         */
+        public static double comb(int n, int r) {
+            // Ensure n and r are within their permissible ranges
+            if (n >= 0 && r >= 0) {
+                // Check case when r is greater than n
+                if (r > n) return Double.NaN;
+                // Trivial case
+                else if (r == 0 || n == r) return 1.0;
+                // Definition of the combination function
+                else return factorial(n) / (factorial(r) * factorial(n - r));
+            }
+            // If either n or r are less than 0, return undefined
+            else return Double.NaN;
+        }
         
+        /**
+         * The permutation function, defined to accept some value n (the number of items in a group) and some value r
+         * (the number of items to be ordered). The function returns the number of permutations that exist for
+         * such n and r (the number of ways r items can be sorted in a group of n).
+         * 
+         * perm(n, r) = nPr
+         * 
+         * i.e., perm(4, 2) = 12 : perm(3, 0) = 1 : perm(8, 4) = 1680
+         * 
+         * @param n The number of orderable items
+         * @param r The number of items to order
+         * @return The number of ways r items can be ordered from n options
+         */
+        public static double perm(int n, int r) {
+            // Ensure n and r are within their permissible ranges
+            if (n >= 0 && r >= 0) {
+                // Check case when r is greater than n
+                if (r > n) return Double.NaN;
+                // Trivial cases
+                else if (r == 0) return 1;
+                else if (n == r) return factorial(n);
+                // Definition of the permutation function
+                else return factorial(n) / factorial(n - r);
+            }
+            // If either n or r are less than 0, return undefined
+            else return Double.NaN;
+        }
+
         /**
          * Defined as the method that raises a number to a power. 
          * 
