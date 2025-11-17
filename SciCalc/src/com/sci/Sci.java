@@ -1,6 +1,7 @@
 package com.sci;
 
 import java.util.*;
+import java.util.function.Function;
 /**
  * A scientific calculator library providing mathematical elements, operations, and constants.
  * <p>
@@ -10,10 +11,10 @@ import java.util.*;
  * @author Angelos Hirmiz
  * @version 1.0
  */
-public class SciCalc {
+public class Sci {
 
     // Prevent instantiation
-    private SciCalc() {}
+    private Sci() {}
 
     /**
      * A collection of basic mathematical elements and operations
@@ -1168,6 +1169,39 @@ public class SciCalc {
     public static class Ops {
         // Prevent instantiation
         private Ops() {}
+
+        /**
+         * The summation function, defined mathematically as the operation that sums a function over a range
+         * [i, n] where i and n are integer values. The summation function iterates some k over the entire range, applying 
+         * the argument (the specified function f) to k, adding it to a total sum.
+         * 
+         * In notation, the summation operator is typically denoted with the Greek letter capital sigma (Σ) for 'sum', with
+         * the lower bound i defined at the bottom of the Σ, and the lower bound n defined at the top. Adjacent to the 
+         * Σ and in parentheses is a defined function with respect to i.
+         * Practically, this might look like:
+         * 
+         * [i, n] Σ (f(i)) = The sum from i to n, of f(i) = sum(f(i), i, n)
+         * 
+         * i.e., sum(i, 1, 10) = 55 : sum(1 / i, 1, 100) = 5.187...
+         * 
+         * @param f The function applied to each value in the range [i, n]
+         * @param i The lower bound of the summation
+         * @param n The upper bound of the summation
+         * @return The sum of all f(x) over x∈[i, n]
+         */
+        public static double sum(Function<Double, Double> f, int i, int n) {
+            // If the range yields a single iteration, simply return f(n)
+            if (i == n) return f.apply((double) n);
+            // Return undefined if the lower bound is greater than the upper bound
+            else if (i > n) return Double.NaN;
+            else {
+                double sum = 0;
+                for (int k = i; k <= n; k++) { // Iterate over [i, n]
+                    sum += f.apply((double) k);
+                }
+                return sum;
+            }
+        }
     }
     /**
      * A collection of important mathematical constants
